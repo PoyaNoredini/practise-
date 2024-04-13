@@ -39,7 +39,8 @@ class Database:
     def migrate(fresh=False):
         Database.make_users_table(fresh)
         Database.make_configs_table(fresh)
-        Database.make_dataPost_table(fresh)
+        Database.make_parcels_table(fresh)
+        Database.make_persons_table(fresh)
         if fresh:
             Database.seed()
 
@@ -83,18 +84,31 @@ class Database:
         Database.do(query)
 
     @staticmethod
-    def make_dataPost_table(fresh: bool = False):  
+    def make_parcels_table(fresh: bool = False): 
         if fresh:
-                Database.do("DROP TABLE IF EXISTS dataPost;")
+                Database.do("DROP TABLE IF EXISTS parcels;") # name of the table
         query = """
-                CREATE TABLE IF NOT EXISTS dataPost (
-                    customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    id_card BIGINT UNIQUE DEFAULT NULL,
-                    customer_name VARCHAR(50) DEFAULT NULL,
-                    contact_name VARCHAR(50) DEFAULT NULL,
+                CREATE TABLE IF NOT EXISTS parcels (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    sender_id INTEGER,
+                    receiver_id INTEGER,
                     country VARCHAR(30) DEFAULT NULL,
                     postal_code BIGINT UNIQUE DEFAULT 0,
-                    address VARCHAR(150) DEFAULT NULL
+                    address TEXT DEFAULT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """
+        Database.do(query)
+
+    @staticmethod
+    def make_persons_table(fresh: bool = False): 
+        if fresh:
+                Database.do("DROP TABLE IF EXISTS persons;") # name of the table
+        query = """
+                CREATE TABLE IF NOT EXISTS persons (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    card_id VARCHAR(20) UNIQUE DEFAULT NULL,
+                    name VARCHAR(50) DEFAULT NULL
                 );
             """
         Database.do(query)
